@@ -37,7 +37,8 @@ st.markdown("""
         font-size: calc(2.2rem + 1.5vw) !important;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        color: #FFFFFF;
+        /* FIXED: This automatically switches between white and dark gray based on the user's theme */
+        color: inherit !important; 
     }
     .centered-subtitle {
         text-align: center;
