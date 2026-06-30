@@ -21,7 +21,7 @@ try:
     if "GEMINI_API_KEY" in st.secrets:
         MY_API_KEY = st.secrets["GEMINI_API_KEY"]
     else:
-        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  # <-- Paste your local test key here
+        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  # 
 except Exception:
     MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 # ==========================================================
@@ -55,30 +55,7 @@ st.markdown("""
         text-align: center;
         color: #A0A0A0;
         font-size: calc(1.0rem + 0.3vw) !important;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Centralized Welcome Intro Block */
-    .welcome-container {
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto 2.5rem auto;
-        padding: 20px;
-        background-color: rgba(128, 128, 128, 0.1);
-        border-radius: 12px;
-        border: 1px solid rgba(128, 128, 128, 0.2);
-    }
-    .welcome-text {
-        font-size: 1.15rem !important;
-        line-height: 1.6;
-        color: inherit;
-        margin-bottom: 10px;
-    }
-    .welcome-features {
-        font-size: 1.05rem !important;
-        font-weight: 500;
-        color: #D32F2F;
-        margin-top: 8px;
+        margin-bottom: 2rem;
     }
     
     /* Enlarge the section labels */
@@ -145,27 +122,26 @@ st.markdown("""
 # --- Centralized Title Banner ---
 st.markdown('<div class="centered-title">📊 Smart OCR & File Analyzer</div>', unsafe_allow_html=True)
 st.markdown('<div class="centered-subtitle">Upload any document, presentation, or image to cleanly extract structured context via Gemini 2.5 Flash</div>', unsafe_allow_html=True)
+st.markdown("---")
 
-# --- FIRST-TIME WELCOME BLOCK ---
+# --- FIRST-TIME WELCOME BLOCK (Classic Expander Design) ---
 if 'first_time_load' not in st.session_state:
     st.session_state.first_time_load = True
 
 if st.session_state.first_time_load:
     st.toast("👋 Welcome to Smart OCR & File Analyzer!")
-    welcome_html = """
-    <div class="welcome-container">
-        <p class="welcome-text">
-            🚀 <strong>Welcome!</strong> This utility combines the analytical layout processing of Python and Streamlit with the multimodal vision intelligence of the <strong>Gemini 2.5 Flash</strong> model engine.
-        </p>
-        <p class="welcome-features">
-            🔍 Intelligent OCR Text Parsing &nbsp;|&nbsp; 📝 Context Explanations &nbsp;|&nbsp; 🔬 Slide & Layout Document Auditing
-        </p>
-    </div>
-    """
-    st.markdown(welcome_html, unsafe_allow_html=True)
+    
+    with st.expander("🚀 Quick Intro: What does this application do?", expanded=True):
+        st.markdown("""
+        **Welcome!** This utility combines **Python & Streamlit** with the advanced vision capabilities of the **Gemini 2.5 Flash** model.
+        
+        * **🔍 Extract Text:** Instantly read text from images or PDFs (Optical Character Recognition).
+        * **📝 Get Explanations:** Convert confusing forms or charts into plain, readable summaries.
+        * **🔬 Deep Visual Audits:** Automatically flag structural components like signatures, graphics, or logos.
+        
+        *Simply upload your file on the left, choose your analysis options, and hit the big red button!*
+        """)
     st.session_state.first_time_load = False
-
-st.markdown("---")
 
 # --- Initialize Session States for Selection ---
 if 'opt_ocr' not in st.session_state: st.session_state.opt_ocr = True
@@ -179,7 +155,7 @@ with col_input:
     st.markdown('<p class="big-label">📁 Drag & Drop Document</p>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
         "Upload Image, PDF, or PowerPoint", 
-        type=['png', 'jpg', 'jpeg', 'webp', 'bmp', 'pdf', 'pptx'],
+        type=['png', 'jpg', 'jpeg', 'webp', 'bmp'],
         label_visibility="collapsed"
     )
     
@@ -283,17 +259,30 @@ with col_output:
                 final_prompt = "\n\n".join(prompt_parts)
 
                 try:
-                    # Condition engine payload strategy based on text context vs visual bytes inputs
+                    # Case 1: Structured string data (PowerPoint text maps)
                     if isinstance(processing_data, str):
                         full_content = f"{final_prompt}\n\nHere is the presentation content data text extracted directly from the slides:\n{processing_data}"
                         response = client.models.generate_content(
                             model='gemini-2.5-flash',
                             contents=full_content
                         )
+                    # Case 2: Raw data bytes handling (PDF fallback) - Packaged securely for GenAI SDK
+                    elif isinstance(processing_data, bytes):
+                        response = client.models.generate_content(
+                            model='gemini-2.5-flash',
+                            contents=[
+                                final_prompt,
+                                {
+                                    "mime_type": "application/pdf",
+                                    "data": processing_data
+                                }
+                            ]
+                        )
+                    # Case 3: Images (Native image uploads or successful PDF conversion slides)
                     else:
                         response = client.models.generate_content(
                             model='gemini-2.5-flash',
-                            contents=[processing_data, final_prompt] if not isinstance(processing_data, bytes) else [final_prompt, processing_data]
+                            contents=[processing_data, final_prompt]
                         )
                     
                     st.success("✅ File Successfully Analyzed!")
