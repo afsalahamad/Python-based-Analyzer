@@ -9,7 +9,7 @@ try:
     if "GEMINI_API_KEY" in st.secrets:
         MY_API_KEY = st.secrets["GEMINI_API_KEY"]
     else:
-        MY_API_KEY = "AYOUR_GEMINI_API_KEY_HERE"  # <-- Paste your local test key here
+        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  
 except Exception:
     MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 # ==========================================================
@@ -37,7 +37,6 @@ st.markdown("""
         font-size: calc(2.2rem + 1.5vw) !important;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        /* FIXED: This automatically switches between white and dark gray based on the user's theme */
         color: inherit !important; 
     }
     .centered-subtitle {
@@ -112,6 +111,26 @@ st.markdown("""
 st.markdown('<div class="centered-title">📊 Smart OCR & File Analyzer</div>', unsafe_allow_html=True)
 st.markdown('<div class="centered-subtitle">Upload any document or image to cleanly extract structured context via Gemini 2.5 Flash</div>', unsafe_allow_html=True)
 st.markdown("---")
+
+# --- FIRST-TIME WELCOME BLOCK (Balloons Removed) ---
+if 'first_time_load' not in st.session_state:
+    st.session_state.first_time_load = True
+
+if st.session_state.first_time_load:
+    st.toast("👋 Welcome to Smart OCR & File Analyzer!")
+    
+    # Quick, attractive introduction card explaining the app
+    with st.expander("🚀 Quick Intro: What does this application do?", expanded=True):
+        st.markdown("""
+        **Welcome!** This utility combines **Python & Streamlit** with the advanced vision capabilities of the **Gemini 2.5 Flash** model.
+        
+        * **🔍 Extract Text:** Instantly read text from images or PDFs (Optical Character Recognition).
+        * **📝 Get Explanations:** Convert confusing forms or charts into plain, readable summaries.
+        * **🔬 Deep Visual Audits:** Automatically flag structural components like signatures, graphics, or logos.
+        
+        *Simply upload your file on the left, choose your analysis options, and hit the big red button!*
+        """)
+    st.session_state.first_time_load = False  # Set to False so it doesn't replay on normal button clicks
 
 # --- Initialize Session States for Selection ---
 if 'opt_ocr' not in st.session_state: st.session_state.opt_ocr = True
