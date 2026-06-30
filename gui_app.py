@@ -21,12 +21,12 @@ try:
     if "GEMINI_API_KEY" in st.secrets:
         MY_API_KEY = st.secrets["GEMINI_API_KEY"]
     else:
-        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  
+        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  # <-- Paste your local test key here
 except Exception:
     MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 # ==========================================================
 
-# Initialize the Gemini Client Engine
+# Initialize the Gemini Client
 try:
     if MY_API_KEY == "YOUR_GEMINI_API_KEY_HERE" or not MY_API_KEY:
         st.error("⚠️ Missing API Key! Please configure your Gemini API key.")
@@ -309,7 +309,7 @@ with col_output:
 st.markdown("---") 
 footer_html = """
 <div class="footer">
-    © 2026 Analyzer By Afsal. All Rights Reserved. | 
+    © 2026 Afsal Hamad. All Rights Reserved. | 
     🌐 Source Code: <a href="https://github.com/afsalahamad/Python-based-Analyzer" target="_blank">GitHub Repository</a>
 </div>
 """
