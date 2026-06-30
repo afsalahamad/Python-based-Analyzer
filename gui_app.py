@@ -3,16 +3,16 @@ from google import genai
 from PIL import Image
 import io
 
-# Safe library imports
+# Safe layout parsing library imports
 try:
     from pdf2image import convert_from_bytes
 except ImportError:
-    st.error("Please add 'pdf2image' to your requirements.txt file.")
+    st.error("Please ensure 'pdf2image' is included in your requirements.txt manifest.")
 
 try:
     from pptx import Presentation
 except ImportError:
-    st.error("Please add 'python-pptx' to your requirements.txt file.")
+    st.error("Please ensure 'python-pptx' is included in your requirements.txt manifest.")
 
 # ==========================================================
 # 🔑 API KEY CONFIGURATION
@@ -21,12 +21,12 @@ try:
     if "GEMINI_API_KEY" in st.secrets:
         MY_API_KEY = st.secrets["GEMINI_API_KEY"]
     else:
-        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+        MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"  
 except Exception:
     MY_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 # ==========================================================
 
-# Initialize the Gemini Client
+# Initialize the Gemini Client Engine
 try:
     if MY_API_KEY == "YOUR_GEMINI_API_KEY_HERE" or not MY_API_KEY:
         st.error("⚠️ Missing API Key! Please configure your Gemini API key.")
@@ -43,6 +43,7 @@ st.set_page_config(page_title="Smart OCR Analyzer", page_icon="📊", layout="wi
 # Custom CSS for absolute responsiveness, big text, layout centering, and the isolated RED action button
 st.markdown("""
     <style>
+    /* Centering the main header and description */
     .centered-title {
         text-align: center;
         font-size: calc(2.2rem + 1.5vw) !important;
@@ -56,6 +57,8 @@ st.markdown("""
         font-size: calc(1.0rem + 0.3vw) !important;
         margin-bottom: 1.5rem;
     }
+
+    /* Centralized Welcome Intro Block */
     .welcome-container {
         text-align: center;
         max-width: 800px;
@@ -77,11 +80,15 @@ st.markdown("""
         color: #D32F2F;
         margin-top: 8px;
     }
+    
+    /* Enlarge the section labels */
     .big-label {
         font-size: 1.4rem !important;
         font-weight: bold !important;
         margin-bottom: 10px !important;
     }
+
+    /* Restricting maximum image preview height so it doesn't break mobile workflows */
     .stImage img {
         max-height: 300px !important;
         width: auto !important;
@@ -90,8 +97,11 @@ st.markdown("""
         display: block;
         border-radius: 8px;
     }
+
+    /* Style ONLY the standalone main Execute button to be red. 
+       Excludes choice buttons sitting inside grid columns. */
     div.stButton > button:not(div[data-testid="stColumn"] button) {
-        background-color: #D32F2F !important;
+        background-color: #D32F2F !important; /* Rich Crimson Red */
         color: white !important;
         font-weight: bold !important;
         font-size: 1.25rem !important;
@@ -100,14 +110,20 @@ st.markdown("""
         border-radius: 8px !important;
         transition: background-color 0.3s ease, transform 0.1s ease !important;
     }
+    
+    /* Hover state modification strictly for the standalone red execution button */
     div.stButton > button:not(div[data-testid="stColumn"] button):hover {
-        background-color: #B71C1C !important;
+        background-color: #B71C1C !important; /* Deeper cherry red on hover */
         color: white !important;
         border: none !important;
     }
-    div[data-testid="stHorizontalBlock"] div.stButton > button {
-        font-size: inherit;
+    
+    /* Style optimization for text tracking within choice buttons */
+    div[data-testid="stColumn"] div.stButton > button {
+        white-space: pre-wrap !important;
     }
+
+    /* Custom Footer Styling */
     .footer {
         text-align: center;
         padding: 20px;
@@ -116,7 +132,7 @@ st.markdown("""
         margin-top: 50px;
     }
     .footer a {
-        color: #D32F2F !important;
+        color: #D32F2F !important; /* Matches your red theme */
         text-decoration: none;
         font-weight: bold;
     }
@@ -128,7 +144,7 @@ st.markdown("""
 
 # --- Centralized Title Banner ---
 st.markdown('<div class="centered-title">📊 Smart OCR & File Analyzer</div>', unsafe_allow_html=True)
-st.markdown('<div class="centered-subtitle">Upload any document, image, or presentation to cleanly extract structured context via Gemini 2.5 Flash</div>', unsafe_allow_html=True)
+st.markdown('<div class="centered-subtitle">Upload any document, presentation, or image to cleanly extract structured context via Gemini 2.5 Flash</div>', unsafe_allow_html=True)
 
 # --- FIRST-TIME WELCOME BLOCK ---
 if 'first_time_load' not in st.session_state:
@@ -139,10 +155,10 @@ if st.session_state.first_time_load:
     welcome_html = """
     <div class="welcome-container">
         <p class="welcome-text">
-            🚀 <strong>Welcome!</strong> This production-grade utility combines the analytical layout processing of Python and Streamlit with the multimodal vision intelligence of the <strong>Gemini 2.5 Flash</strong> model engine.
+            🚀 <strong>Welcome!</strong> This utility combines the analytical layout processing of Python and Streamlit with the multimodal vision intelligence of the <strong>Gemini 2.5 Flash</strong> model engine.
         </p>
         <p class="welcome-features">
-            🔍 Intelligent OCR Text Parsing &nbsp;|&nbsp; 📝 Conversational Context Explanations &nbsp;|&nbsp; 🔬 Deep Visual Asset Auditing
+            🔍 Intelligent OCR Text Parsing &nbsp;|&nbsp; 📝 Context Explanations &nbsp;|&nbsp; 🔬 Slide & Layout Document Auditing
         </p>
     </div>
     """
@@ -171,6 +187,7 @@ with col_input:
     st.markdown('<p class="big-label">⚙️ Analysis Options</p>', unsafe_allow_html=True)
     st.caption("Click the giant buttons below to select/deselect features before analyzing:")
 
+    # High-fidelity, macro-sized selectable button rows
     btn_col1, btn_col2, btn_col3 = st.columns(3)
     
     with btn_col1:
@@ -200,6 +217,7 @@ with col_input:
             st.session_state.opt_deep = not st.session_state.opt_deep
             st.rerun()
 
+    # Extra spacing before execution
     st.markdown(" ")
     analyze_button = st.button("🚀 EXECUTE SMART ANALYSIS", use_container_width=True)
 
@@ -213,13 +231,14 @@ with col_output:
         is_pdf = file_name.endswith('.pdf')
         
         if not is_pdf and not is_pptx:
-            # Native image path
+            # Native Image Stream
             img_preview = Image.open(uploaded_file)
             st.image(img_preview, caption=f"Active Target: {uploaded_file.name}")
             processing_data = img_preview
         elif is_pdf:
             st.info(f"📄 Active PDF Document: **{uploaded_file.name}**")
             try:
+                # Convert first page of PDF to image format for spatial layout tracking
                 pdf_images = convert_from_bytes(uploaded_file.read(), first_page=1, last_page=1)
                 if pdf_images:
                     processing_data = pdf_images[0]
@@ -239,15 +258,16 @@ with col_output:
                         if hasattr(shape, "text") and shape.text.strip():
                             pptx_text_parts.append(shape.text.strip())
                 
-                # Bundle the slide details into a solid context block for the prompt pipeline
                 processing_data = "\n".join(pptx_text_parts)
-                st.success(f"✅ Successfully parsed {len(prs.slides)} slides! Ready for analysis.")
+                st.success(f"✅ Successfully parsed {len(prs.slides)} slides! Ready for processing.")
             except Exception as pptx_err:
-                st.error(f"Failed to parse PowerPoint structure: {pptx_err}")
+                st.error(f"Failed to parse PowerPoint presentation: {pptx_err}")
 
         # Handle Action Execution
         if analyze_button and processing_data is not None:
             with st.spinner("🤖 Synthesizing file layout and text context..."):
+                
+                # Dynamically construct the systemic task prompt
                 prompt_parts = []
                 if st.session_state.opt_ocr:
                     prompt_parts.append("Perform OCR / Content Extraction: Read and extract all contents exactly as they appear. Maintain structure.")
@@ -257,13 +277,13 @@ with col_output:
                     prompt_parts.append("Identify layout and presentation aesthetics: Analyze structural topics, core insights, and provide a granular breakdown.")
                 
                 if not prompt_parts:
-                    st.warning("⚠️ Please select at least one analysis option block module above!")
+                    st.warning("⚠️ Please select at least one of the large analysis options block modules above!")
                     st.stop()
                     
                 final_prompt = "\n\n".join(prompt_parts)
 
                 try:
-                    # Pass context clean based on string vs object data types
+                    # Condition engine payload strategy based on text context vs visual bytes inputs
                     if isinstance(processing_data, str):
                         full_content = f"{final_prompt}\n\nHere is the presentation content data text extracted directly from the slides:\n{processing_data}"
                         response = client.models.generate_content(
