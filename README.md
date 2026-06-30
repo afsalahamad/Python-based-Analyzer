@@ -79,5 +79,3 @@ GEMINI_API_KEY = "your_actual_confidential_production_api_key"
 ## 🤝 Contributing & Scope
 
 Contributions, layout modifications, or feature proposals are absolutely welcome. Feel free to submit an active branch fork request, open an issue card, or play around with adding multi-language translation flags next!
-
-© 2026 Afsal Hamad. All Rights Reserved.
