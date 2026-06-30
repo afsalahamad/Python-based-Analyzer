@@ -41,7 +41,7 @@ st.markdown("""
     }
     .centered-subtitle {
         text-align: center;
-        color: #A0A0A0;
+        color: #ADD8E6;
         font-size: calc(1.0rem + 0.3vw) !important;
         margin-bottom: 2rem;
     }
