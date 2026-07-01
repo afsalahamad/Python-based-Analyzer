@@ -135,7 +135,7 @@ if st.session_state.first_time_load:
         st.markdown("""
         **Welcome!** This utility combines **Python & Streamlit** with the advanced vision capabilities of the **Gemini 2.5 Flash** model.
         
-        * **🔍 Extract Text:** Instantly read text from images or PDFs (Optical Character Recognition).
+        * **🔍 Extract Text:** Instantly read text from images (Optical Character Recognition).
         * **📝 Get Explanations:** Convert confusing forms or charts into plain, readable summaries.
         * **🔬 Deep Visual Audits:** Automatically flag structural components like signatures, graphics, or logos.
         
@@ -298,7 +298,7 @@ with col_output:
 st.markdown("---") 
 footer_html = """
 <div class="footer">
-    © 2026 Afsal Hamad. All Rights Reserved. | 
+    © 2026 Analyzer By Afsal. All Rights Reserved. | 
     🌐 Source Code: <a href="https://github.com/afsalahamad/Python-based-Analyzer" target="_blank">GitHub Repository</a>
 </div>
 """
